@@ -1,0 +1,36 @@
+#include <types.h>
+
+u32 armv7_pmnc_read(void);
+void armv7_pmnc_write(u32 val);
+int armv7_pmnc_has_overflowed(u32 pmnc);
+int armv7_pmnc_counter_has_overflowed(u32 pmnc, int idx);
+int armv7_pmnc_select_counter(int idx);
+u32 armv7pmu_read_counter(int idx);
+void armv7pmu_write_counter(int idx, u32 value);
+void armv7_pmnc_write_evtsel(int idx, u32 val);
+int armv7_pmnc_enable_counter(int idx);
+int armv7_pmnc_disable_counter(int idx);
+int armv7_pmnc_enable_intens(int idx);
+int armv7_pmnc_disable_intens(int idx);
+u32 armv7_pmnc_getreset_flags(void);
+u32 armv7_read_num_pmnc_events(void);
+u32 krait_read_pmresr0(void);
+void krait_write_pmresr0(u32 val);
+u32 krait_read_pmresr1(void);
+void krait_write_pmresr1(u32 val);
+u32 krait_read_pmresr2(void);
+void krait_write_pmresr2(u32 val);
+u32 krait_read_vmresr0(void);
+void krait_write_vmresr0(u32 val);
+void krait_pre_vmresr0(void);
+void krait_post_vmresr0(void);
+u32 krait_get_columnmask(u32 evt_code);
+void krait_evt_setup(u32 gr, u32 setval, u32 evt_code);
+void krait_clear_pmuregs(void);
+void krait_clearpmu(u32 grp, u32 val, u32 evt_code);
+void krait_pmu_reset(void);
+void krait_pmu_init(void);
+void krait_pmu_stop(void);
+void krait_pmu_start(void);
+void krait_pmu_enable_event(int idx, int event);
+void armv7_pmnc_dump_regs();

@@ -1,0 +1,6 @@
+*.o
+*.elf
+*.img
+*.list
+*.hex
+.ccls-cache
