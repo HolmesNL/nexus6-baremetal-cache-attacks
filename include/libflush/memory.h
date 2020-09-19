@@ -10,6 +10,8 @@ inline __attribute__((always_inline)) void access_memory(void* pointer)
       );
 }
 
+void jump_to_memory(void* pointer);
+
 inline __attribute__((always_inline)) void memory_barrier(void)
 {
     asm volatile ("DSB");

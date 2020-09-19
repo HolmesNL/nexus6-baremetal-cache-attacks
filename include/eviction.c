@@ -2,6 +2,7 @@
 #include <eviction.h>
 #include <memory.h>
 #include <serial.h>
+#include <coprocessor.h>
 
 u32 get_index(u32 address)
 {
@@ -21,6 +22,24 @@ void eviction_init()
             }
         }
     }
+}
+
+void eviction_instruction_init()
+{
+    eviction = malloc(sizeof(eviction_t));
+    for (int index=0;index<NUMBER_OF_SETS;index++) {
+        congruent_address_cache_entry_t *congruent = &eviction->congruent_address_cache[index];
+        for (int i=0;i<ADDRESS_COUNT;i++) {
+            u32 *address = (u32 *) (EVICTION_ADDRESSES_BASE + ((index + NUMBER_OF_SETS*i) << LINE_LENGTH_LOG2));
+            *address = 0xe1a0f000; //mov pc, r0
+            congruent->congruent_addresses[i] = (void *) address;
+            if (get_index((u32) congruent->congruent_addresses[i]) != index) {
+                print("eviction set is incorrect!\r\n");
+            }
+        }
+    }
+    dsb(); //make sure the data is written before continueing 
+    flush_instruction(); //Flush instruction cache so the new value is used
 }
 
 void *get_address_in_set(u32 set)
@@ -47,6 +66,27 @@ void probe(register u32 index)
         access_memory(congruent_address_cache_entry->congruent_addresses[i]);
     }
 }
+
+void prime_instruction(register u32 index)
+{
+    register congruent_address_cache_entry_t *congruent_address_cache_entry = &eviction->congruent_address_cache[index];
+    for (register unsigned int i = 0; i < ES_EVICTION_COUNTER; i++) {
+        for (register unsigned int j = 0; j < ES_NUMBER_OF_ACCESSES_IN_LOOP; j++) {
+            for (register unsigned int k = 0; k < ES_DIFFERENT_ADDRESSES_IN_LOOP; k++) {
+                jump_to_memory(congruent_address_cache_entry->congruent_addresses[i+k]);
+            }
+        }
+    }
+}
+
+void probe_instruction(register u32 index)
+{
+    register congruent_address_cache_entry_t *congruent_address_cache_entry = &eviction->congruent_address_cache[index];
+    for (int i=ADDRESS_COUNT -1; i>=0;i--) {
+        jump_to_memory(congruent_address_cache_entry->congruent_addresses[i]);
+    }
+}
+
 
 void evict(register void* pointer)
 {

@@ -32,6 +32,8 @@ void flushL2();
 void flushL1L2();
 void prime(u32 index);
 void probe(u32 index);
+void prime_instruction(u32 index);
+void probe_instruction(u32 index);
 
 /*
  * Flush the specified set in the L2 cache.
@@ -56,6 +58,7 @@ inline __attribute__((always_inline)) void flush_set(int set)
 void flush_set1(int set);
 
 void eviction_init();
+void eviction_instruction_init();
 void *get_address_in_set(u32 set);
 
 #endif //eviction_included
